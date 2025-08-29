@@ -23,7 +23,7 @@ Você deve simular o consumo de uma API como se estivesse ouvindo pedidos de um 
 Use o seguinte endpoint para obter pedidos:
 
 ```
-GET https://run.mocky.io/v3/0571366e-6c6a-420d-a73b-56645b5a6716
+GET https://desafio-api.accon.com.br/orders
 ```
 
 Exemplo de resposta:
