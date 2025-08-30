@@ -1,13 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { IntegrationsController } from './integrations.controller';
 import { IntegrationsService } from './integrations.service';
-import { ExternalOrderDto } from './dto/external-order.dto';
+import { AcconOrderDto } from './dto/accon-order.dto';
 
 describe('IntegrationsController', () => {
   let controller: IntegrationsController;
   let service: IntegrationsService;
 
-  const mockOrders: ExternalOrderDto[] = [
+  const mockOrders: AcconOrderDto[] = [
     {
       _id: '1',
       delivery: true,

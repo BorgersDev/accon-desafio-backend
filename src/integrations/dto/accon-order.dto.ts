@@ -1,4 +1,4 @@
-export interface ExternalOrderDto {
+export interface AcconOrderDto {
   _id: string;
   delivery: boolean;
   canceled: boolean;

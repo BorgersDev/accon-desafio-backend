@@ -2,14 +2,14 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { IntegrationsService } from './integrations.service';
 import { HttpService } from '@nestjs/axios';
 import { of, throwError } from 'rxjs';
-import { ExternalOrderDto } from './dto/external-order.dto';
+import { AcconOrderDto } from './dto/accon-order.dto';
 import { InternalServerErrorException } from '@nestjs/common';
 
 describe('IntegrationsService', () => {
   let service: IntegrationsService;
   let httpService: HttpService;
 
-  const mockOrders: ExternalOrderDto[] = [
+  const mockOrders: AcconOrderDto[] = [
     {
       _id: '1',
       delivery: true,
@@ -137,13 +137,13 @@ describe('IntegrationsService', () => {
     (httpService.get as jest.Mock).mockReturnValueOnce(
       of({ data: mockOrders }),
     );
-    const result = await service.fetchOrders();
+    const result = await service.fetchOrders('accon');
     expect(result).toEqual(mockOrders);
   });
 
   it('should throw error when API returns null data', async () => {
     (httpService.get as jest.Mock).mockReturnValueOnce(of({ data: null }));
-    await expect(service.fetchOrders()).rejects.toThrow(
+    await expect(service.fetchOrders('accon')).rejects.toThrow(
       InternalServerErrorException,
     );
   });
@@ -152,7 +152,7 @@ describe('IntegrationsService', () => {
     (httpService.get as jest.Mock).mockReturnValueOnce(
       throwError(() => new Error('API error')),
     );
-    await expect(service.fetchOrders()).rejects.toThrow(
+    await expect(service.fetchOrders('accon')).rejects.toThrow(
       InternalServerErrorException,
     );
   });
