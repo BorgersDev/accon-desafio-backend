@@ -19,7 +19,7 @@ export interface OpenDeliveryOrderDto {
     };
     ordersCountOnMerchant: number;
   };
-  items: Array<{
+  items: {
     id: string;
     externalCode: string;
     name: string;
@@ -33,7 +33,32 @@ export interface OpenDeliveryOrderDto {
       value: number;
       currency: string;
     };
-  }>;
+    options: {
+      index: number;
+      id: string;
+      name: string;
+      externalCode: string;
+      unit: string;
+      quantity: number;
+      unitPrice: {
+        value: number;
+        currency: string;
+      };
+      originalPrice?: {
+        value: number;
+        currency: string;
+      };
+      subtotalPrice?: {
+        value: number;
+        currency: string;
+      };
+      totalPrice: {
+        value: number;
+        currency: string;
+      };
+      specialInstructions?: string;
+    }[];
+  }[];
   total: {
     subTotal: {
       value: number;
@@ -59,13 +84,14 @@ export interface OpenDeliveryOrderDto {
   payments: {
     prepaid: number;
     pending: number;
-    methods: Array<{
+    methods: {
       id: string;
       type: string;
       method: string;
       brand: string;
       value: number;
       currency: string;
-    }>;
+    }[];
   };
+  extraInfo: string;
 }
