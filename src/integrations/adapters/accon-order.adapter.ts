@@ -1,6 +1,6 @@
 import { IOrderIntegrationAdapter } from './iorder-integration-adapter';
 import { AcconOrderDto } from '../dto/accon-order.dto';
-import { OpenDeliveryOrderDto } from '../dto/open-delivery-order.dto';
+import { OpenDeliveryOrderDto } from '../../orders/dto/open-delivery-order.dto';
 import { v4 as uuidv4 } from 'uuid';
 
 function mapPaymentMethod(acconMethod: string): {

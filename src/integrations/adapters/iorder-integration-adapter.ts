@@ -1,4 +1,4 @@
-import { OpenDeliveryOrderDto } from '../dto/open-delivery-order.dto';
+import { OpenDeliveryOrderDto } from '../../orders/dto/open-delivery-order.dto';
 
 export interface IOrderIntegrationAdapter {
   toOpenDelivery(externalOrder: any): OpenDeliveryOrderDto;

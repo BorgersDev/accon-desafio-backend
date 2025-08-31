@@ -2,7 +2,7 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { AcconOrderAdapter } from './adapters/accon-order.adapter';
-import { OpenDeliveryOrderDto } from './dto/open-delivery-order.dto';
+import { OpenDeliveryOrderDto } from '../orders/dto/open-delivery-order.dto';
 import { IOrderIntegrationAdapter } from './adapters/iorder-integration-adapter';
 
 @Injectable()
