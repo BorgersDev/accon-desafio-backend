@@ -126,7 +126,7 @@ export class AcconOrderAdapter implements IOrderIntegrationAdapter {
         pending: externalOrder.total,
         methods: [
           {
-            id: externalOrder.payment.cod,
+            id: uuidv4(),
             type: externalOrder.payment?.online ? 'PREPAID' : 'PENDING',
             method: paymentInfo.method,
             brand: paymentInfo.brand,
