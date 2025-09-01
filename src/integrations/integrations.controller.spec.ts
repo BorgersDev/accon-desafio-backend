@@ -1,137 +1,99 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { IntegrationsController } from './integrations.controller';
 import { IntegrationsService } from './integrations.service';
-import { AcconOrderDto } from './dto/accon-order.dto';
+import { OrdersService } from '../orders/orders.service';
 
 describe('IntegrationsController', () => {
   let controller: IntegrationsController;
-  let service: IntegrationsService;
+  let integrationsService: IntegrationsService;
+  let ordersService: OrdersService;
 
-  const mockOrders: AcconOrderDto[] = [
+  const mockOrders = [
     {
-      _id: '1',
-      delivery: true,
-      canceled: false,
-      scheduled: false,
-      network: '',
-      sequential: 1,
-      store: {
-        _id: '',
-        name: '',
-        address: {
-          zip: '',
-          state: '',
-          city: '',
-          address: '',
-          number: '',
-          complement: '',
-          district: '',
-          name: '',
-          is_active: true,
-          created_at: '',
-          latlng: { lat: 0, lng: 0 },
-        },
-        deliveryTime: '',
-        toGoTime: '',
-        details: {
-          whatsapp: { is_active: false },
-          email: '',
-          phone: '',
-          socialName: '',
-          storePhone: '',
-          document: '',
-        },
+      id: '1',
+      type: 'DELIVERY',
+      displayId: '123',
+      createdAt: new Date().toISOString(),
+      orderTiming: 'INSTANT',
+      preparationStartDateTime: new Date().toISOString(),
+      extraInfo: '',
+      merchant: { id: 'm1', name: 'Store' },
+      customer: {
+        id: 'c1',
+        name: 'Customer',
+        documentNumber: '123',
+        email: 'a@a.com',
+        phone: { number: '999' },
+        ordersCountOnMerchant: 1,
       },
-      user: {
-        _id: '',
-        name: '',
-        document: '',
-        email: '',
-        phone: '',
-        totalOrders: 0,
+      items: [],
+      total: {
+        subTotal: { value: 10, currency: 'BRL' },
+        deliveryFee: { value: 0, currency: 'BRL' },
+        otherFees: { value: 0, currency: 'BRL' },
+        discount: { value: 0, currency: 'BRL' },
+        orderAmount: { value: 10, currency: 'BRL' },
       },
-      address: {
-        zip: '',
-        state: '',
-        city: '',
-        address: '',
-        number: '',
-        complement: '',
-        district: '',
-        name: '',
-        is_active: true,
-        created_at: '',
-        latlng: { lat: 0, lng: 0 },
+      payments: {
+        prepaid: 0,
+        pending: 10,
+        methods: [
+          {
+            id: 'p1',
+            type: 'PENDING',
+            method: 'CASH',
+            brand: '',
+            value: 10,
+            currency: 'BRL',
+          },
+        ],
       },
-      discount: 0,
-      subtotal: 0,
-      deliveryTax: 0,
-      date: '',
-      voucher: {
-        _id: '',
-        stores: [],
-        fidelity: false,
-        products: [],
-        percent: false,
-        usage: 0,
-        recurrent: false,
-        usagePerUser: 0,
-        firstOrder: false,
-        on_list: false,
-        is_active: false,
-        name: '',
-        text: '',
-        value: 0,
-        quantity: 0,
-        type: '',
-        rules: '',
-        start_at: '',
-        expires_at: '',
-        rede: '',
-        time: [],
-        created_at: '',
-        updated_at: '',
-        filed: false,
-        minOrderValue: 0,
-      },
-      notes: '',
-      document: '',
-      ip: '',
-      change: 0,
-      source: '',
-      status: [],
-      total: 0,
-      payment: {
-        online: false,
-        name: '',
-        cod: '',
-        externalVendorCode: '',
-      },
-      products: [],
     },
   ];
 
   beforeEach(async () => {
-    const serviceMock = {
+    const integrationsServiceMock = {
       fetchOrders: jest.fn().mockResolvedValue(mockOrders),
+    };
+    const ordersServiceMock = {
+      persistOrders: jest.fn().mockResolvedValue(undefined),
     };
 
     const module: TestingModule = await Test.createTestingModule({
       controllers: [IntegrationsController],
-      providers: [{ provide: IntegrationsService, useValue: serviceMock }],
+      providers: [
+        { provide: IntegrationsService, useValue: integrationsServiceMock },
+        { provide: OrdersService, useValue: ordersServiceMock },
+      ],
     }).compile();
 
     controller = module.get<IntegrationsController>(IntegrationsController);
-    service = module.get<IntegrationsService>(IntegrationsService);
+    integrationsService = module.get<IntegrationsService>(IntegrationsService);
+    ordersService = module.get<OrdersService>(OrdersService);
   });
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
 
-  it('should return orders from service', async () => {
+  it('should persist external orders and return success message', async () => {
     const result = await controller.fetchOrders();
-    expect(result).toEqual(mockOrders);
-    expect(service.fetchOrders).toHaveBeenCalled();
+    expect(integrationsService.fetchOrders).toHaveBeenCalledWith('accon');
+    expect(ordersService.persistOrders).toHaveBeenCalledWith(mockOrders);
+    expect(result).toEqual({
+      message: 'Orders persisted successfully',
+      count: mockOrders.length,
+    });
+  });
+
+  it('should handle error when persisting order', async () => {
+    (ordersService.persistOrders as jest.Mock).mockRejectedValueOnce(
+      new Error('DB error'),
+    );
+    const result = await controller.fetchOrders();
+    expect(result).toEqual({
+      message: 'Failed to persist orders',
+      error: 'DB error',
+    });
   });
 });
