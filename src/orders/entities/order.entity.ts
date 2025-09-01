@@ -12,6 +12,7 @@ import { Customer } from './customer.entity';
 import { OrderTotal } from './order-total.entity';
 import { PaymentMethod } from './payment-method.entity';
 import { Item } from './item.entity';
+import { timestamp } from 'rxjs';
 
 @Entity('orders')
 export class Order {
@@ -34,6 +35,9 @@ export class Order {
 
   @Column({ type: 'timestamp' })
   created_at: Date;
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  persisted_at: Date;
 
   @Column({ nullable: true })
   order_timing: string;

@@ -56,6 +56,7 @@ export const mockOrder: Order = {
   type: 'DELIVERY',
   display_id: 'D-123',
   created_at: new Date('2024-01-01T00:00:00.000Z'),
+  persisted_at: new Date(),
   order_timing: 'ASAP',
   preparation_start: new Date('2024-01-01T00:05:00.000Z'),
   extra_info: '',

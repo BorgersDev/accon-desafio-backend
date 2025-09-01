@@ -37,6 +37,7 @@ CREATE TABLE orders (
     type VARCHAR(20) NOT NULL, -- DELIVERY / TAKEOUT
     display_id VARCHAR(50),
     created_at TIMESTAMP NOT NULL,
+    persisted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     order_timing VARCHAR(20),
     preparation_start TIMESTAMP,
     extra_info TEXT

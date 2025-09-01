@@ -14,7 +14,10 @@ export class OrdersService {
   ) {}
 
   async create(orderData: Partial<Order>): Promise<Order> {
-    const order = this.orderRepository.create(orderData);
+    const order = this.orderRepository.create({
+      ...orderData,
+      persisted_at: new Date(),
+    });
     return this.orderRepository.save(order);
   }
 
