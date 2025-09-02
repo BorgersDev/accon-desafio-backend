@@ -8,6 +8,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { join } from 'path';
       autoLoadEntities: true,
       synchronize: false,
     }),
+    ScheduleModule.forRoot(),
     IntegrationsModule,
     OrdersModule,
   ],

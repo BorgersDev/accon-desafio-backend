@@ -2,14 +2,14 @@ import { Controller, Get } from '@nestjs/common';
 import { IntegrationsService } from './integrations.service';
 import { OrdersService } from '../orders/orders.service';
 
-@Controller('integrations')
+@Controller('')
 export class IntegrationsController {
   constructor(
     private readonly integrationsService: IntegrationsService,
     private readonly ordersService: OrdersService,
   ) {}
 
-  @Get('orders')
+  @Get('sync-orders')
   async fetchOrders(): Promise<{
     message: string;
     count?: number;
