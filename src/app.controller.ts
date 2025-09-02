@@ -7,7 +7,8 @@ export class AppController {
 
   @Get()
   @Render('index')
-  getHello() {
-    return { name: this.appService.getHello() };
+  async dashboard() {
+    const orders = await this.appService.getDashboardOrders();
+    return { orders };
   }
 }
