@@ -27,16 +27,19 @@ export class AcconOrderAdapter implements IOrderIntegrationAdapter {
   toOpenDelivery(externalOrder: AcconOrderDto): OpenDeliveryOrderDto {
     const paymentInfo = mapPaymentMethod(externalOrder.payment?.name);
 
-    // Required properties validation
-    if (!externalOrder._id) throw new Error('must have required property ID');
-    if (!externalOrder.store?.name)
-      throw new Error('must have required property store name');
-    if (!externalOrder.user?.name)
-      throw new Error('must have required property user name');
+    const missingFields: string[] = [];
+    if (!externalOrder._id) missingFields.push('ID');
+    if (!externalOrder.store?.name) missingFields.push('store name');
+    if (!externalOrder.user?.name) missingFields.push('user name');
     if (!externalOrder.products || externalOrder.products.length === 0)
-      throw new Error('must have require property Items');
-    if (!externalOrder.total)
-      throw new Error('must have required property total');
+      missingFields.push('Items');
+    if (!externalOrder.total) missingFields.push('total');
+
+    if (missingFields.length > 0) {
+      throw new Error(
+        `Missing required properties: ${missingFields.join(', ')}`,
+      );
+    }
 
     return {
       id: uuidv4(),
