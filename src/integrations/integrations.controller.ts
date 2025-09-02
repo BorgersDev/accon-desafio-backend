@@ -15,18 +15,9 @@ export class IntegrationsController {
     count?: number;
     error?: string;
   }> {
-    try {
-      const orders = await this.integrationsService.fetchOrders('accon');
-      await this.ordersService.persistOrders(orders);
-      return {
-        message: 'Orders persisted successfully',
-        count: orders.length,
-      };
-    } catch (error) {
-      return {
-        message: 'Failed to persist orders',
-        error: error?.message || String(error),
-      };
-    }
+    return await this.ordersService.fetchAndPersistOrdersFromIntegration(
+      'accon',
+      this.integrationsService,
+    );
   }
 }

@@ -15,6 +15,7 @@ describe('OrdersService', () => {
     type: 'DELIVERY',
     display_id: '123',
     created_at: new Date(),
+    persisted_at: new Date(),
     order_timing: 'INSTANT',
     preparation_start: new Date(),
     extra_info: '',
