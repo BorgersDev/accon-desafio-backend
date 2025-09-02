@@ -56,7 +56,10 @@ describe('IntegrationsController', () => {
       fetchOrders: jest.fn().mockResolvedValue(mockOrders),
     };
     const ordersServiceMock = {
-      persistOrders: jest.fn().mockResolvedValue(undefined),
+      fetchAndPersistOrdersFromIntegration: jest.fn().mockResolvedValue({
+        message: 'Orders persisted successfully',
+        count: mockOrders.length,
+      }),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -78,8 +81,9 @@ describe('IntegrationsController', () => {
 
   it('should persist external orders and return success message', async () => {
     const result = await controller.fetchOrders();
-    expect(integrationsService.fetchOrders).toHaveBeenCalledWith('accon');
-    expect(ordersService.persistOrders).toHaveBeenCalledWith(mockOrders);
+    expect(
+      (ordersService as any).fetchAndPersistOrdersFromIntegration,
+    ).toHaveBeenCalledWith('accon', integrationsService);
     expect(result).toEqual({
       message: 'Orders persisted successfully',
       count: mockOrders.length,
@@ -87,9 +91,12 @@ describe('IntegrationsController', () => {
   });
 
   it('should handle error when persisting order', async () => {
-    (ordersService.persistOrders as jest.Mock).mockRejectedValueOnce(
-      new Error('DB error'),
-    );
+    (
+      ordersService as any
+    ).fetchAndPersistOrdersFromIntegration.mockResolvedValueOnce({
+      message: 'Failed to persist orders',
+      error: 'DB error',
+    });
     const result = await controller.fetchOrders();
     expect(result).toEqual({
       message: 'Failed to persist orders',

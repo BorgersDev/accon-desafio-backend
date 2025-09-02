@@ -117,9 +117,43 @@ describe('OrdersService', () => {
 
   it('should create an order', async () => {
     const result = await service.create(mockOrderEntity);
-    expect(orderRepository.create).toHaveBeenCalledWith(mockOrderEntity);
-    expect(orderRepository.save).toHaveBeenCalledWith(mockOrderEntity);
-    expect(result).toEqual(mockOrderEntity);
+    expect(orderRepository.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: mockOrderEntity.id,
+        type: mockOrderEntity.type,
+        display_id: mockOrderEntity.display_id,
+        order_timing: mockOrderEntity.order_timing,
+        extra_info: mockOrderEntity.extra_info,
+        customer: mockOrderEntity.customer,
+        merchant: mockOrderEntity.merchant,
+        total: mockOrderEntity.total,
+        created_at: expect.any(Date),
+        persisted_at: expect.any(Date),
+        preparation_start: expect.any(Date),
+      }),
+    );
+    expect(orderRepository.save).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: mockOrderEntity.id,
+        type: mockOrderEntity.type,
+        display_id: mockOrderEntity.display_id,
+        order_timing: mockOrderEntity.order_timing,
+        extra_info: mockOrderEntity.extra_info,
+        customer: mockOrderEntity.customer,
+        merchant: mockOrderEntity.merchant,
+        total: mockOrderEntity.total,
+        created_at: expect.any(Date),
+        persisted_at: expect.any(Date),
+        preparation_start: expect.any(Date),
+      }),
+    );
+    expect(result).toHaveProperty('id', mockOrderEntity.id);
+    expect(result).toHaveProperty('customer');
+    expect(result).toHaveProperty('merchant');
+    expect(result).toHaveProperty('total');
+    expect(result).toHaveProperty('created_at');
+    expect(result).toHaveProperty('persisted_at');
+    expect(result).toHaveProperty('preparation_start');
   });
 
   it('should find all orders', async () => {

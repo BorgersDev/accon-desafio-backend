@@ -44,7 +44,7 @@ describe('IntegrationsService', () => {
       of({ data: [invalidOrder] }),
     );
     await expect(service.fetchOrders('accon')).rejects.toThrow(
-      'must have required property ID',
+      'Missing required properties: ID',
     );
   });
 
@@ -57,7 +57,7 @@ describe('IntegrationsService', () => {
       of({ data: [invalidOrder] }),
     );
     await expect(service.fetchOrders('accon')).rejects.toThrow(
-      'must have required property store name',
+      'Missing required properties: store name',
     );
   });
 
@@ -70,7 +70,7 @@ describe('IntegrationsService', () => {
       of({ data: [invalidOrder] }),
     );
     await expect(service.fetchOrders('accon')).rejects.toThrow(
-      'must have required property user name',
+      'Missing required properties: user name',
     );
   });
 
@@ -80,7 +80,7 @@ describe('IntegrationsService', () => {
       of({ data: [invalidOrder] }),
     );
     await expect(service.fetchOrders('accon')).rejects.toThrow(
-      'must have require property Items',
+      'Missing required properties: Items',
     );
   });
 
@@ -90,7 +90,7 @@ describe('IntegrationsService', () => {
       of({ data: [invalidOrder] }),
     );
     await expect(service.fetchOrders('accon')).rejects.toThrow(
-      'must have required property total',
+      'Missing required properties: total',
     );
   });
 
