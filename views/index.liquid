@@ -3,9 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hello, world!</title>
+  <title>Orders Dashboard!</title>
+  <link href="/css/output.css" rel="stylesheet">
 </head>
-<body>
-  <h1>Hello, {{ name }}!</h1>
+<body class="bg-gray-50 text-gray-800 font-sans">
+  <main class="max-w-3xl mx-auto p-6">
+    <h1 class="text-2xl font-bold mb-6">Orders Dashboard</h1>
+
+    <ul class="space-y-4">
+      {% for order in orders %}
+        <li class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+          <p><strong>Customer:</strong> {{ order.customer }}</p>
+          <p><strong>Data:</strong> {{ order.createdAt | default: order.date | date: "%d/%m/%Y" }}</p>
+          <p><strong>Hora:</strong> {{ order.createdAt | default: order.date | date: "%H:%M:%S" }}</p>
+          <p><strong>Quantity:</strong> {{ order.itemsCount }}</p>
+          <p><strong>Total:</strong> {{ order.total }} {{ order.total.orderAmount.currency }}</p>
+        </li>
+      {% endfor %}
+    </ul>
+  </main>
 </body>
 </html>
