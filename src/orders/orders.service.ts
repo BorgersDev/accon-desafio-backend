@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { MoreThan, Repository } from 'typeorm';
 
 import { Order } from './entities/order.entity';
 import { mapDtoToOrderEntity } from './mappers/order.mapper';
@@ -25,6 +25,24 @@ export class OrdersService {
     for (const dto of dtos) {
       const orderEntity = mapDtoToOrderEntity(dto);
       await this.create(orderEntity);
+    }
+  }
+  async fetchAndPersistOrdersFromIntegration(
+    source: string,
+    integrationsService: any,
+  ): Promise<{ message: string; count?: number; error?: string }> {
+    try {
+      const orders = await integrationsService.fetchOrders(source);
+      await this.persistOrders(orders as OpenDeliveryOrderDto[]);
+      return {
+        message: 'Orders persisted successfully',
+        count: orders.length,
+      };
+    } catch (error) {
+      return {
+        message: 'Failed to persist orders',
+        error: error?.message || String(error),
+      };
     }
   }
 
@@ -55,26 +73,22 @@ export class OrdersService {
     });
   }
 
-  async remove(id: string): Promise<void> {
-    await this.orderRepository.delete(id);
+  async findRecent(minutes: number = 10): Promise<Order[]> {
+    const since = new Date(Date.now() - minutes * 60 * 1000);
+    return this.orderRepository.find({
+      where: { persisted_at: MoreThan(since) },
+      relations: [
+        'items',
+        'items.options',
+        'customer',
+        'merchant',
+        'payments',
+        'total',
+      ],
+    });
   }
 
-  async fetchAndPersistOrdersFromIntegration(
-    source: string,
-    integrationsService: any,
-  ): Promise<{ message: string; count?: number; error?: string }> {
-    try {
-      const orders = await integrationsService.fetchOrders(source);
-      await this.persistOrders(orders as OpenDeliveryOrderDto[]);
-      return {
-        message: 'Orders persisted successfully',
-        count: orders.length,
-      };
-    } catch (error) {
-      return {
-        message: 'Failed to persist orders',
-        error: error?.message || String(error),
-      };
-    }
+  async remove(id: string): Promise<void> {
+    await this.orderRepository.delete(id);
   }
 }
