@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { OrdersGateway } from './orders.gateway';
 import { OrdersService } from './orders.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Order } from './entities/order.entity';
@@ -98,12 +99,20 @@ describe('OrdersService', () => {
       delete: jest.fn().mockResolvedValue({}),
     };
 
+    const mockOrdersGateway = {
+      notifyOrdersChanged: jest.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         OrdersService,
         {
           provide: getRepositoryToken(Order),
           useValue: orderRepository,
+        },
+        {
+          provide: OrdersGateway,
+          useValue: mockOrdersGateway,
         },
       ],
     }).compile();
