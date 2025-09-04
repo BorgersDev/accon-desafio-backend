@@ -11,6 +11,7 @@ import { OrderTotal } from './entities/order-total.entity';
 import { PaymentMethod } from './entities/payment-method.entity';
 import { Item } from './entities/item.entity';
 import { ItemOption } from './entities/item-option.entity';
+import { OrdersGateway } from './orders.gateway';
 
 @Module({
   imports: [
@@ -24,7 +25,7 @@ import { ItemOption } from './entities/item-option.entity';
       ItemOption,
     ]),
   ],
-  providers: [OrdersService],
+  providers: [OrdersService, OrdersGateway],
   controllers: [OrdersController],
   exports: [OrdersService],
 })

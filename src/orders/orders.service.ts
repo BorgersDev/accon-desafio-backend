@@ -5,12 +5,14 @@ import { MoreThan, Repository } from 'typeorm';
 import { Order } from './entities/order.entity';
 import { mapDtoToOrderEntity } from './mappers/order.mapper';
 import { OpenDeliveryOrderDto } from './dto/open-delivery-order.dto';
+import { OrdersGateway } from './orders.gateway';
 
 @Injectable()
 export class OrdersService {
   constructor(
     @InjectRepository(Order)
     private readonly orderRepository: Repository<Order>,
+    private readonly ordersGateway: OrdersGateway,
   ) {}
 
   async create(orderData: Partial<Order>): Promise<Order> {
@@ -18,7 +20,9 @@ export class OrdersService {
       ...orderData,
       persisted_at: new Date(),
     });
-    return this.orderRepository.save(order);
+    const savedOrder = await this.orderRepository.save(order);
+    this.ordersGateway.notifyOrdersChanged();
+    return savedOrder;
   }
 
   async persistOrders(dtos: OpenDeliveryOrderDto[]): Promise<void> {
@@ -73,7 +77,7 @@ export class OrdersService {
     });
   }
 
-  async findRecent(minutes: number = 10): Promise<Order[]> {
+  async findRecent(minutes: number = 2): Promise<Order[]> {
     const since = new Date(Date.now() - minutes * 60 * 1000);
     return this.orderRepository.find({
       where: { persisted_at: MoreThan(since) },
@@ -90,5 +94,6 @@ export class OrdersService {
 
   async remove(id: string): Promise<void> {
     await this.orderRepository.delete(id);
+    this.ordersGateway.notifyOrdersChanged();
   }
 }

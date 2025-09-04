@@ -19,7 +19,7 @@
   </header>
     
 
-    <ul class="space-y-4">
+    <ul id="orders-list" class="space-y-4">
       {% for order in orders %}
       <li class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
         <p><strong>Customer:</strong> {{ order.customer }}</p>
@@ -35,5 +35,18 @@
       {% endfor %}
     </ul>
   </main>
+
+<script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+<script>
+  const socket = io();
+
+  socket.on('ordersChanged', function() {
+    fetch('/dashboard/partial')
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById('orders-list').innerHTML = html;
+      });
+  });
+</script>
 </body>
 </html>
