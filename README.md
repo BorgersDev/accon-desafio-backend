@@ -46,7 +46,8 @@ yarn install
 
 ### 4. Configure o banco de dados
 
-Crie o arquivo `.env` na raiz do projeto e preencha os campos:
+- Crie o arquivo `.env` na raiz do projeto e preencha os campos com as suas credenciais:
+
 ```env
 POSTGRES_HOST=localhost
 POSTGRES_PORT=5432
@@ -64,18 +65,19 @@ npm run db:up
 #### Sem Docker
 
 Instale o PostgreSQL localmente ([download](https://www.postgresql.org/download/)).
-Crie um banco de dados para o projeto (exemplo: accon_desafio).
+- Crie um banco de dados para o projeto (exemplo: accon_desafio).
 Execute o script `docker/init.sql` no seu banco para criar todas as tabelas e estruturas necessárias:
   ```sh
   psql -U <usuario> -d <nome_do_banco> -f docker/init.sql
   ```
-- Crie o arquivo `.env` na raiz do projeto com suas credenciais:
+- Crie o arquivo `.env` na raiz do projeto e preencha os campos com as suas credenciais:
+
 ```env
-DB_HOST=localhost
-DB_PORT=5432
-DB_USER=seu_usuario
-DB_PASS=sua_senha
-DB_NAME=accon_desafio
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_DB=accon-desafio
 ```
 
 ### 5. Inicie o backend
