@@ -10,43 +10,209 @@
 
 <body class="bg-gray-50 text-gray-800 font-sans">
   <main class="max-w-3xl mx-auto p-6">
-  <header class="bg-neutral-50 text-purple-800">
-    <div class=" flex items-center w-full justify-between max-w-7xl px-4 lg:px-8 py-4">
-      {% comment %} <h1 class="text-4xl font-semibold tracking-wide">Desafio</h1> {% endcomment %}
-      <img src="/assets/accon.webp" alt="Logo" />
-      <h1 class="text-2xl font-bold">Orders Dashboard</h1>
-    </div>
-  </header>
-    
+    <header class="bg-neutral-50">
+      <div class="flex items-center w-full justify-between max-w-7xl px-4 py-4 lg:px-8 gap-4">
+        <img src="/assets/accon.webp" alt="Logo" class="w-32 sm:w-40 md:w-48 lg:w-56 h-auto max-w-xs" />
+        <h1 class="font-bold text-base sm:text-lg md:text-2xl lg:text-3xl flex-shrink text-neutral-500">Orders Dashboard
+        </h1>
+      </div>
+    </header>
 
-    <ul id="orders-list" class="space-y-4">
-      {% for order in orders %}
-      <li class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-        <p><strong>Customer:</strong> {{ order.customer }}</p>
-        <p><strong>Data:</strong> {{ order.createdAt | default: order.date | date: "%d/%m/%Y" }}</p>
-        <p><strong>Hora:</strong> {{ order.createdAt | default: order.date | date: "%H:%M:%S" }}</p>
-        <ul>
-          {% for item in order.items %}
-          <li><strong>Item: </strong>{{ item.name }} - Quantity: {{ item.quantity }}</li>
+    <div class="overflow-x-auto rounded-lg border border-neutral-200 bg-white shadow-sm">
+      <table class="min-w-full table-fixed">
+        <thead class="bg-neutral-100 text-left text-sm text-neutral-600">
+          <tr>
+            <th class="w-40 px-5 py-3 font-medium">Date</th>
+            <th class="px-5 py-3 font-medium">Customer</th>
+            <th class="w-32 px-5 py-3 font-medium">Items</th>
+            <th class="w-25 px-5 py-3 text-center font-medium">Total</th>
+            <th class="w-28 px-5 py-3 text-center font-medium">Order</th>
+          </tr>
+        </thead>
+
+        <tbody class="divide-y divide-neutral-100 text-sm" id="orders-list">
+          {% for order in orders %}
+          {%- assign itemsCount = order.itemsCount | default: order.items.size | default: 0 -%}
+          {%- assign totalOD = order.total.orderAmount.value -%}
+          {%- assign totalFallback = order.total -%}
+          {%- assign customerName = order.customer.name | default: order.user.name | default: order.customer | default:
+          "Cliente" -%}
+          {%- assign dateSource = order.createdAt | default: order.date -%}
+
+          <tr class="hover:bg-neutral-50">
+            <!-- Date + time -->
+            <td class="px-5 py-4">
+              <div class="leading-tight">
+                <div>{{ dateSource | date: "%d/%m/%Y" }}</div>
+                <div class="text-xs text-neutral-500">{{ dateSource | date: "%H:%M:%S" }}</div>
+              </div>
+            </td>
+
+            <!-- Customer -->
+            <td class="px-5 py-4">
+              {{ customerName }}
+            </td>
+
+            <!-- Items (name × quantity; fallback para contagem) -->
+            <td class="px-5 py-4 align-top">
+              {% if order.items and order.items.size > 0 %}
+              <ul class="space-y-1">
+                {% for item in order.items %}
+                <li class="truncate">
+                  <span class="font-medium">{{ item.name }}</span>
+                  <span class="text-neutral-500">× {{ item.quantity }}</span>
+                </li>
+                {% endfor %}
+              </ul>
+              {% else %}
+              {{ itemsCount }}
+              {% endif %}
+            </td>
+
+            <!-- Total -->
+            <td class="px-5 py-4 font-medium">
+              {{ order.total }}
+            </td>
+
+            <!-- Actions -->
+            <td class="px-5 py-4">
+              <div class="flex items-center justify-end gap-3">
+                <!-- Visualize -->
+                <button type="button"
+                  class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-neutral-200 text-neutral-600 hover:bg-neutral-100"
+                  title="Visualize" aria-label="Visualize order" onclick="visualizeOrder('{{ order.id }}')">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M2.036 12.322a1.012 1.012 0 010-.644C3.423 7.51 7.36 5 12 5c4.64 0 8.577 2.51 9.964 6.678.07.207.07.437 0 .644C20.577 16.49 16.64 19 12 19c-4.64 0-8.577-2.51-9.964-6.678z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </button>
+
+                <!-- Remove -->
+                <button type="button" onclick="removeOrder('{{ order.id | default: order._id }}')"
+                  class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-red-200 text-red-600 hover:bg-red-50"
+                  title="Excluir" aria-label="Excluir pedido">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21a48.108 48.108 0 00-3.478-.397M4.772 5.79c1.15-.135 2.3-.24 3.45-.316m0 0l.324-1.62A1.125 1.125 0 019.65 3h4.7c.53 0 .992.37 1.104.89l.325 1.585m-7.532-.005a48.667 48.667 0 017.532.005M6.75 9h10.5m-1.5 12H8.25A2.25 2.25 0 016 18.75V9.75h12v9A2.25 2.25 0 0116.5 21z" />
+                  </svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="5" class="px-5 py-10 text-center text-neutral-500">
+              Nenhum pedido encontrado.
+            </td>
+          </tr>
           {% endfor %}
-        </ul>
-        <p><strong>Total:</strong> {{ order.total }} {{ order.total.orderAmount.currency }}</p>
-      </li>
-      {% endfor %}
-    </ul>
+        </tbody>
+      </table>
+    </div>
   </main>
 
-<script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
-<script>
-  const socket = io();
+  <div id="order-modal" class="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm hidden">
+    <div class="bg-white rounded-lg shadow-lg max-w-md w-full p-6 relative">
+      <button onclick="closeOrderModal()"
+        class="absolute top-2 right-4 text-gray-500 text-3xl hover:text-gray-800">&times;</button>
+      <h2 class="text-xl font-bold mb-4">Order Details</h2>
+      <div id="order-modal-content"></div>
+    </div>
+  </div>
 
-  socket.on('ordersChanged', function() {
-    fetch('/dashboard/partial')
-      .then(res => res.text())
-      .then(html => {
-        document.getElementById('orders-list').innerHTML = html;
-      });
-  });
-</script>
+  <script>
+    function removeOrder(id) { fetch(`/orders/${id}`, { method: 'DELETE' }) }
+    function visualizeOrder(id) {
+      fetch(`/orders/${id}`)
+        .then(res => res.json())
+        .then(order => {
+          // Datas
+          const dateObj = new Date(order.created_at);
+          const dateStr = dateObj.toLocaleDateString('pt-BR');
+          const timeStr = dateObj.toLocaleTimeString('pt-BR');
+          // Merchant
+          const merchantName = order.merchant?.name || '';
+          // Customer
+          const customer = order.customer || {};
+          // Itens
+          const itemsHtml = (order.items || []).map(item => {
+            const itemTotal = Number(item.unit_price) * Number(item.quantity);
+            const optionsHtml = (item.options || []).map(opt =>
+              `<li class="ml-4 text-xs text-neutral-600">
+                <strong>${opt.name}</strong> × ${opt.quantity} 
+                ${opt.unit_price ? `- R$ ${Number(opt.unit_price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}` : ''}
+              </li>`
+            ).join('');
+            return `
+              <li>
+                <span class="font-medium">${item.name}</span> × ${item.quantity}
+                <span class="ml-2 text-xs text-neutral-600">Unit: R$ ${Number(item.unit_price).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+                <span class="ml-2 text-xs text-neutral-600">Total: R$ ${itemTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+                ${optionsHtml ? `<ul>${optionsHtml}</ul>` : ''}
+              </li>
+            `;
+          }).join('');
+          // Total e desconto
+          const discount = order.total?.discount || 0;
+          const total = order.total?.order_amount || 0;
+          const totalFormatted = Number(total).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+          const discountFormatted = Number(discount).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+          // Payments
+          const paymentsHtml = (order.payments || []).map(pay =>
+            `<li>
+              <strong>${pay.type}</strong> - ${pay.method} ${pay.brand ? `(${pay.brand})` : ''} 
+              <span class="ml-2">R$ ${Number(pay.value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+            </li>`
+          ).join('');
+          // Renderiza HTML
+          const html = `
+            <div class="mb-2 flex gap-2"><span class="font-semibold text-purple-700">Type:</span> <span>${order.type}</span></div>
+            <div class="mb-2 flex gap-2"><span class="font-semibold text-purple-700">Date:</span> <span>${dateStr}</span></div>
+            <div class="mb-2 flex gap-2"><span class="font-semibold text-purple-700">Time:</span> <span>${timeStr}</span></div>
+            <div class="mb-2 flex gap-2"><span class="font-semibold text-purple-700">Order Timing:</span> <span>${order.order_timing}</span></div>
+            <div class="mb-2 flex gap-2"><span class="font-semibold text-purple-700">Merchant:</span> <span>${merchantName}</span></div>
+            <div class="mb-2 flex gap-2"><span class="font-semibold text-purple-700">Customer:</span> <span>${customer.name}</span></div>
+            <div class="mb-2 flex gap-2"><span class="font-semibold text-purple-700">Email:</span> <span>${customer.email}</span></div>
+            <div class="mb-2 flex gap-2"><span class="font-semibold text-purple-700">Telephone:</span> <span>${customer.phone}</span></div>
+            <div class="mb-2 flex gap-2"><span class="font-semibold text-purple-700">Customer orders count:</span> <span>${customer.orders_count}</span></div>
+            <div class="mb-2"><strong class="text-purple-700">Items:</strong>
+              <ul class="list-disc ml-4 text-sm text-gray-700">
+                ${itemsHtml}
+              </ul>
+            </div>
+            <div class="mb-2"><strong class="text-purple-700">Payment:</strong>
+            <ul class="list-disc ml-4 text-sm text-gray-700">
+            ${paymentsHtml}
+            </ul>
+            </div>
+            <div class="mt-4 justify-between items-center">
+              <div class="mb-2 flex gap-2"><span class="font-semibold text-red-600">Discount:</span> <span>${discountFormatted}</span></div>
+              <div class="mb-2 flex gap-2"><span class="font-semibold text-green-700">Total:</span> <span>${totalFormatted}</span></div>
+            </div>
+          `;
+          document.getElementById('order-modal-content').innerHTML = html;
+          document.getElementById('order-modal').classList.remove('hidden');
+        });
+    }
+    function closeOrderModal() {
+      document.getElementById('order-modal').classList.add('hidden');
+    }
+  </script>
+  <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+  <script>
+    const socket = io();
+
+    socket.on('ordersChanged', function () {
+      fetch('/dashboard/partial')
+        .then(res => res.text())
+        .then(html => {
+          document.getElementById('orders-list').innerHTML = html;
+        });
+    });
+  </script>
 </body>
+
 </html>

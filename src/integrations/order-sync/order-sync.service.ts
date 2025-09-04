@@ -10,7 +10,7 @@ export class OrderSyncService {
     private readonly integrationsService: IntegrationsService,
   ) {}
 
-  @Interval(30000)
+  @Interval(15000)
   async syncOrders() {
     await this.ordersService.fetchAndPersistOrdersFromIntegration(
       'accon',
