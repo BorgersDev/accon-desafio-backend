@@ -46,23 +46,19 @@ yarn install
 
 ### 4. Configure o banco de dados
 
-#### Usando Docker (recomendado)
-```bash
-cd docker
+Crie o arquivo `.env` na raiz do projeto e preencha os campos:
+```env
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_DB=accon-desafio
 ```
-#### Suba o banco de dados
+#### Usando Docker (recomendado)
+ Suba o banco de dados
 
 ```bash
-docker-compose up -d
-cd ..
-```
-Crie o arquivo `.env` na raiz do projeto:
-```env
-DB_HOST=localhost
-DB_PORT=5432
-DB_USER=postgres
-DB_PASS=postgres
-DB_NAME=accon_desafio
+npm run db:up
 ```
 
 #### Sem Docker
