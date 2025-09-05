@@ -15,7 +15,7 @@ A estrutura foi pensada de uma forma na qual não é difícil adicionar outras A
 
 - **Integração:** Busca pedidos da API mockada e converte para o padrão Open Delivery através de um adapter.
 - **Persistência:** Salva pedidos que foram convertidos no banco PostgreSQL usando TypeORM.
-- **Dashboard:** Exibe pedidos dos últimos 5 minutos, renderizado com LiquidJS e estilizados com Tailwindcss.
+- **Dashboard:** Exibe pedidos dos últimos 2 minutos, renderizado com LiquidJS e estilizados com Tailwindcss.
 - **Tempo real:** Atualiza a lista de pedidos por WebSocket sempre que há novos pedidos sem recarregar a tela.
 - **Sincronização:** Manual através do endpoint (`/sync-orders`) ou automática (agendado a cada 30s).
 
@@ -25,15 +25,18 @@ A estrutura foi pensada de uma forma na qual não é difícil adicionar outras A
 ## 📝 Passo a Passo para Rodar o Sistema
 
 ### 1. Pré-requisitos
-- Node.js v18+ ([Documentação](https://nodejs.org/en/docs/) | [Download](https://nodejs.org/en/download/))
+- Node.js v18+ ([Documentação](https://nodejs.org/en/about) | [Download](https://nodejs.org/en/download/))
 - npm ou yarn
 - Docker *(opcional, recomendado)*
 
 ### 2. Clone o repositório
 ```bash
-git clone https://github.com/seu-usuario/accon-desafio-backend.git
-cd accon-desafio-backend
+git clone https://github.com/BorgersDev/accon-desafio-backend
 ```
+Entre na pasta:
+ ```bash
+ cd accon-desafio-backend
+ ```
 
 ### 3. Instale as dependências do backend
 ```bash
@@ -49,8 +52,6 @@ yarn install
 - Crie o arquivo `.env` na raiz do projeto e preencha os campos com as suas credenciais:
 
 ```env
-POSTGRES_HOST=localhost
-POSTGRES_PORT=5432
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=postgres
 POSTGRES_DB=accon-desafio
@@ -77,8 +78,6 @@ Execute o script `docker/init.sql` no seu banco para criar todas as tabelas e es
 - Crie o arquivo `.env` na raiz do projeto e preencha os campos com as suas credenciais:
 
 ```env
-POSTGRES_HOST=localhost
-POSTGRES_PORT=5432
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=postgres
 POSTGRES_DB=accon-desafio
