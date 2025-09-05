@@ -19,6 +19,28 @@ export interface OpenDeliveryOrderDto {
     };
     ordersCountOnMerchant: number;
   };
+  delivery: {
+    deliveredBy: string;
+    deliveryAddress: {
+      country: string;
+      state: string;
+      city: string;
+      district: string;
+      street: string;
+      number: string;
+      complement: string;
+      referencePoint: string;
+      formattedAddress: string;
+      postalCode: string;
+      coordinates: {
+        latitude: number;
+        longitude: number;
+      };
+      estimatedDeliveryTime: string;
+      deliveryDateTime: string;
+      pickupCode: string;
+    };
+  };
   items: {
     id: string;
     externalCode: string;

@@ -3,7 +3,7 @@ import { OrdersService } from './orders/orders.service';
 
 @Injectable()
 export class AppService {
-  constructor(private readonly ordersSerice: OrdersService) {}
+  constructor(private readonly ordersService: OrdersService) {}
 
   fmtBRL = new Intl.NumberFormat('pt-BR', {
     style: 'currency',
@@ -11,7 +11,7 @@ export class AppService {
   });
 
   async getDashboardOrders() {
-    const orders = await this.ordersSerice.findRecent();
+    const orders = await this.ordersService.findRecent();
     const mappedOrders = orders.map((order) => ({
       id: order.id,
       customer: order.customer?.name || 'Unknown',

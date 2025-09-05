@@ -59,6 +59,7 @@ export class OrdersService {
         'merchant',
         'payments',
         'total',
+        'delivery',
       ],
     });
   }
@@ -73,6 +74,7 @@ export class OrdersService {
         'merchant',
         'payments',
         'total',
+        'delivery',
       ],
     });
   }
@@ -88,6 +90,7 @@ export class OrdersService {
         'merchant',
         'payments',
         'total',
+        'delivery',
       ],
     });
   }

@@ -167,30 +167,92 @@
               <span class="ml-2">R$ ${Number(pay.value).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
             </li>`
           ).join('');
-          // Renderiza HTML
+          // Endereço e previsão de entrega
+          const formattedAddress = order.delivery?.formatted_address || '';
+          let estimatedDeliveryTime = order.delivery?.estimated_delivery_date_time || '';
+          let estimatedDeliveryTimeFormatted = '';
+          if (estimatedDeliveryTime) {
+            const dt = new Date(estimatedDeliveryTime);
+            if (!isNaN(dt)) {
+              estimatedDeliveryTimeFormatted = dt.toLocaleTimeString('pt-BR');
+            } else {
+              estimatedDeliveryTimeFormatted = estimatedDeliveryTime;
+            }
+          }
+          // Modal HTML
           const html = `
-            <div class="mb-2 flex gap-2"><span class="font-semibold text-purple-700">Type:</span> <span>${order.type}</span></div>
-            <div class="mb-2 flex gap-2"><span class="font-semibold text-purple-700">Date:</span> <span>${dateStr}</span></div>
-            <div class="mb-2 flex gap-2"><span class="font-semibold text-purple-700">Time:</span> <span>${timeStr}</span></div>
-            <div class="mb-2 flex gap-2"><span class="font-semibold text-purple-700">Order Timing:</span> <span>${order.order_timing}</span></div>
-            <div class="mb-2 flex gap-2"><span class="font-semibold text-purple-700">Merchant:</span> <span>${merchantName}</span></div>
-            <div class="mb-2 flex gap-2"><span class="font-semibold text-purple-700">Customer:</span> <span>${customer.name}</span></div>
-            <div class="mb-2 flex gap-2"><span class="font-semibold text-purple-700">Email:</span> <span>${customer.email}</span></div>
-            <div class="mb-2 flex gap-2"><span class="font-semibold text-purple-700">Telephone:</span> <span>${customer.phone}</span></div>
-            <div class="mb-2 flex gap-2"><span class="font-semibold text-purple-700">Customer orders count:</span> <span>${customer.orders_count}</span></div>
-            <div class="mb-2"><strong class="text-purple-700">Items:</strong>
-              <ul class="list-disc ml-4 text-sm text-gray-700">
-                ${itemsHtml}
-              </ul>
-            </div>
-            <div class="mb-2"><strong class="text-purple-700">Payment:</strong>
-            <ul class="list-disc ml-4 text-sm text-gray-700">
-            ${paymentsHtml}
-            </ul>
-            </div>
-            <div class="mt-4 justify-between items-center">
-              <div class="mb-2 flex gap-2"><span class="font-semibold text-red-600">Discount:</span> <span>${discountFormatted}</span></div>
-              <div class="mb-2 flex gap-2"><span class="font-semibold text-green-700">Total:</span> <span>${totalFormatted}</span></div>
+            <div class="space-y-4">
+              <div class="border-b pb-2 mb-2">
+                <div class="flex flex-wrap gap-4">
+                  <div class="flex flex-col">
+                    <span class="text-xs text-neutral-500">Type:</span>
+                    <span class="font-semibold text-purple-700">${order.type}</span>
+                  </div>
+                  <div class="flex flex-col">
+                    <span class="text-xs text-neutral-500">Date</span>
+                    <span class="font-semibold">${dateStr}</span>
+                  </div>
+                  <div class="flex flex-col">
+                    <span class="text-xs text-neutral-500">Time:</span>
+                    <span class="font-semibold">${timeStr}</span>
+                  </div>
+                  <div class="flex flex-col">
+                    <span class="text-xs text-neutral-500">Estimated delivery:</span>
+                    <span class="font-semibold text-blue-700">${estimatedDeliveryTimeFormatted}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="border-b pb-2 mb-2">
+                <div class="flex flex-wrap gap-4">
+                  <div class="flex flex-col">
+                    <span class="text-xs text-neutral-500">Customer:</span>
+                      <span class="font-semibold">
+                        ${customer.name}
+                        <span class="text-xs text-neutral-500 ml-2">Orders count: ${customer.orders_count}</span>
+                      </span>
+                  </div>
+                  <div class="flex flex-col">
+                    <span class="text-xs text-neutral-500">Email:</span>
+                    <span class="">${customer.email}</span>
+                  </div>
+                  <div class="flex flex-col">
+                    <span class="text-xs text-neutral-500">Phone:</span>
+                    <span class="">${customer.phone}</span>
+                  </div>
+                </div>
+                ${order.extra_info ? `<div class='mt-2'><span class='text-xs text-neutral-500'>Extra info:</span><div class='text-sm break-words'>${order.extra_info}</div></div>` : ''}
+              </div>
+              <div class="border-b pb-2 mb-2">
+                <div class="flex flex-wrap gap-4">
+                  <div class="flex flex-col">
+                    <span class="text-xs text-neutral-500">Merchant:</span>
+                    <span class="font-semibold">${merchantName}</span>
+                  </div>
+                  ${formattedAddress ? `<div class='flex flex-col'><span class='text-xs text-neutral-500'>Address:</span><span class='text-sm break-words'>${formattedAddress}</span></div>` : ''}
+                </div>
+              </div>
+              <div>
+                <strong class="text-purple-700">Items:</strong>
+                <ul class="list-disc ml-4 text-sm text-gray-700">
+                  ${itemsHtml}
+                </ul>
+              </div>
+              <div>
+                <strong class="text-purple-700">Payment:</strong>
+                <ul class="list-disc ml-4 text-sm text-gray-700">
+                  ${paymentsHtml}
+                </ul>
+              </div>
+              <div class="flex flex-wrap gap-4 mt-4">
+                <div class="flex flex-col">
+                  <span class="text-xs text-neutral-500">Discount:</span>
+                  <span class="font-semibold text-red-600">${discountFormatted}</span>
+                </div>
+                <div class="flex flex-col">
+                  <span class="text-xs text-neutral-500">Total:</span>
+                  <span class="font-semibold text-green-700">${totalFormatted}</span>
+                </div>
+              </div>
             </div>
           `;
           document.getElementById('order-modal-content').innerHTML = html;

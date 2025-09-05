@@ -1,9 +1,70 @@
+// DTO-style mock for controller/service tests
+export const mockOrderDto = {
+  id: '1',
+  type: 'DELIVERY',
+  displayId: '123',
+  createdAt: new Date('2024-01-01T00:00:00.000Z').toISOString(),
+  orderTiming: 'INSTANT',
+  preparationStartDateTime: new Date('2024-01-01T00:05:00.000Z').toISOString(),
+  extraInfo: '',
+  merchant: { id: 'm1', name: 'Store' },
+  customer: {
+    id: 'c1',
+    name: 'Customer',
+    documentNumber: '123',
+    email: 'a@a.com',
+    phone: { number: '999' },
+    ordersCountOnMerchant: 1,
+  },
+  items: [],
+  total: {
+    subTotal: { value: 10, currency: 'BRL' },
+    deliveryFee: { value: 0, currency: 'BRL' },
+    otherFees: { value: 0, currency: 'BRL' },
+    discount: { value: 0, currency: 'BRL' },
+    orderAmount: { value: 10, currency: 'BRL' },
+  },
+  payments: {
+    prepaid: 0,
+    pending: 10,
+    methods: [
+      {
+        id: 'p1',
+        type: 'PENDING',
+        method: 'CASH',
+        brand: '',
+        value: 10,
+        currency: 'BRL',
+      },
+    ],
+  },
+  delivery: {
+    deliveredBy: 'MERCHANT',
+    deliveryAddress: {
+      country: 'BR',
+      state: 'SP',
+      city: 'São Paulo',
+      district: 'Centro',
+      street: 'Rua Exemplo',
+      number: '100',
+      complement: '',
+      referencePoint: '',
+      formattedAddress: 'Rua Exemplo, 100, Centro, São Paulo - SP',
+      postalCode: '01000-000',
+      coordinates: { latitude: -23.5, longitude: -46.6 },
+      estimatedDeliveryTime: new Date('2024-01-01T01:00:00.000Z').toISOString(),
+      deliveryDateTime: new Date('2024-01-01T01:30:00.000Z').toISOString(),
+      pickupCode: '',
+    },
+  },
+};
 import { Order } from '../orders/entities/order.entity';
 import { Customer } from '../orders/entities/customer.entity';
 import { Item } from '../orders/entities/item.entity';
 import { PaymentMethod } from '../orders/entities/payment-method.entity';
 import { OrderTotal } from '../orders/entities/order-total.entity';
 import { Merchant } from '../orders/entities/merchant.entity';
+import { mockDelivery } from './delivery.mock';
 
 export const mockCustomer: Customer = {
   id: 'customer-id',
@@ -63,6 +124,7 @@ export const mockOrder: Order = {
   total: mockOrderTotal,
   payments: [mockPaymentMethod],
   items: [mockItem],
+  delivery: mockDelivery,
 };
 
 export const mockOrderArray: Order[] = [mockOrder];

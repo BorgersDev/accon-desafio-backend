@@ -47,7 +47,7 @@ export class AcconOrderAdapter implements IOrderIntegrationAdapter {
       displayId: String(externalOrder.sequential),
       createdAt: externalOrder.date,
       orderTiming: externalOrder.scheduled ? 'SCHEDULED' : 'INSTANT',
-      preparationStartDateTime: externalOrder.date, // NOT SURE YET
+      preparationStartDateTime: externalOrder.date,
       merchant: {
         id: uuidv4(),
         name: externalOrder.store.name,
@@ -62,12 +62,39 @@ export class AcconOrderAdapter implements IOrderIntegrationAdapter {
         },
         ordersCountOnMerchant: externalOrder.user?.totalOrders,
       },
+      delivery: {
+        deliveredBy: 'MERCHANT',
+        deliveryAddress: {
+          country: 'BR',
+          state: externalOrder.address?.state,
+          city: externalOrder.address?.city,
+          district: externalOrder.address?.district,
+          street: externalOrder.address?.address,
+          number: externalOrder.address?.number,
+          complement: externalOrder.address?.complement,
+          referencePoint: '',
+          formattedAddress: `${externalOrder.address?.address || ''} ${externalOrder.address?.number || ''} - ${externalOrder.address?.district || ''}, ${externalOrder.address?.city || ''} - ${externalOrder.address?.state || ''}`,
+          postalCode: externalOrder.address?.zip,
+          coordinates: {
+            latitude: externalOrder.address?.latlng?.lat || 0,
+            longitude: externalOrder.address?.latlng?.lng || 0,
+          },
+          estimatedDeliveryTime: externalOrder.store?.deliveryTime
+            ? new Date(
+                Date.parse(externalOrder.date) +
+                  Number(externalOrder.store.deliveryTime) * 60000,
+              ).toISOString()
+            : new Date(externalOrder.date).toISOString(),
+          deliveryDateTime: externalOrder.address?.created_at || '',
+          pickupCode: '',
+        },
+      },
       items:
         externalOrder.products?.map((product) => ({
           id: uuidv4(),
           externalCode: product.id,
           name: product.name,
-          unit: 'UNIT', // NOT SURE YET
+          unit: 'UNIT',
           quantity: product.quantity,
           unitPrice: {
             value: product.total,
@@ -82,7 +109,7 @@ export class AcconOrderAdapter implements IOrderIntegrationAdapter {
             id: uuidv4(),
             name: modifier.name,
             externalCode: modifier.id,
-            unit: 'UNIT', // NOT SURE YET
+            unit: 'UNIT',
             quantity: modifier.quantity,
             unitPrice: {
               value: modifier.price.actualPrice,
@@ -125,7 +152,7 @@ export class AcconOrderAdapter implements IOrderIntegrationAdapter {
         },
       },
       payments: {
-        prepaid: 0, // NOT SURE YET
+        prepaid: 0,
         pending: externalOrder.total,
         methods: [
           {

@@ -25,7 +25,7 @@ A estrutura foi pensada de uma forma na qual não é difícil adicionar outras A
 ## 📝 Passo a Passo para Rodar o Sistema
 
 ### 1. Pré-requisitos
-- Node.js v18+
+- Node.js v18+ ([Documentação](https://nodejs.org/en/docs/) | [Download](https://nodejs.org/en/download/))
 - npm ou yarn
 - Docker *(opcional, recomendado)*
 
@@ -61,6 +61,10 @@ POSTGRES_DB=accon-desafio
 ```bash
 npm run db:up
 ```
+ou
+```bash
+yarn db:up
+````
 
 #### Sem Docker
 
@@ -90,13 +94,13 @@ yarn start:dev
 ```
 ### 6. Sincronize pedidos
 - Manual: faça requisições Get no endpoint: `/sync-orders` (Postman ou Insomnia)
-- Automático: o sistema busca pedidos novos em intervalos de 30s
+- Automático: o sistema busca pedidos novos em intervalos de 15s
 
 ### 7. Acesse o dashboard
 - Abra [http://localhost:3000](http://localhost:3000) no navegador
 - Veja os pedidos dos últimos 5 minutos sendo exibidos e atualizados em tempo real
 
-### 8. Testes Unitários(mockados)
+### 8. Testes Unitários
 ```bash
 npm run test
 ```

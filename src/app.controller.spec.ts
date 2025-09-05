@@ -23,7 +23,6 @@ describe('AppController', () => {
 
   describe('root', () => {
     it('should return orders array from dashboard', async () => {
-      // Mock o retorno do AppService
       const mockOrders = [
         {
           id: 1,

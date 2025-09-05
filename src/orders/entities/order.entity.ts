@@ -12,7 +12,7 @@ import { Customer } from './customer.entity';
 import { OrderTotal } from './order-total.entity';
 import { PaymentMethod } from './payment-method.entity';
 import { Item } from './item.entity';
-import { timestamp } from 'rxjs';
+import { Delivery } from './delivery.entity';
 
 @Entity('orders')
 export class Order {
@@ -56,4 +56,7 @@ export class Order {
 
   @OneToMany(() => Item, (item) => item.order, { cascade: true })
   items: Item[];
+
+  @OneToOne(() => Delivery, (delivery) => delivery.order, { cascade: true })
+  delivery: Delivery;
 }

@@ -1,11 +1,9 @@
--- init.sql
--- Estrutura para os dados da nova amostra
--- Foco em modelagem normalizada e índices para performance
+
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- =========================
--- MERCHANTS (LOJAS)
+-- MERCHANTS 
 -- =========================
 CREATE TABLE merchant (
     id UUID PRIMARY KEY,
@@ -14,7 +12,7 @@ CREATE TABLE merchant (
 CREATE INDEX idx_merchant_name ON merchant(name);
 
 -- =========================
--- CUSTOMERS (CLIENTES)
+-- CUSTOMERS 
 -- =========================
 CREATE TABLE customer (
     id UUID PRIMARY KEY,
@@ -28,7 +26,7 @@ CREATE INDEX idx_customer_email ON customer(email);
 CREATE INDEX idx_customer_document ON customer(document_number);
 
 -- =========================
--- ORDERS (PEDIDOS)
+-- ORDERS 
 -- =========================
 CREATE TABLE orders (
     id UUID PRIMARY KEY,
@@ -45,6 +43,32 @@ CREATE TABLE orders (
 CREATE INDEX idx_orders_merchant ON orders(merchant_id);
 CREATE INDEX idx_orders_customer ON orders(customer_id);
 CREATE INDEX idx_orders_created ON orders(created_at);
+
+-- =========================
+-- DELIVERY (CUSTOMER ADDRESS) 
+-- =========================
+
+CREATE TABLE delivery (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    order_id UUID UNIQUE REFERENCES orders(id) ON DELETE CASCADE,
+    delivered_by VARCHAR(20) NOT NULL,
+    estimated_delivery_date_time TIMESTAMP NOT NULL,
+    delivery_date_time TIMESTAMP,
+    pickup_code VARCHAR(50),
+    country VARCHAR(2),
+    state VARCHAR(50),
+    city VARCHAR(100),
+    district VARCHAR(100),
+    street VARCHAR(200),
+    number VARCHAR(20),
+    complement VARCHAR(100),
+    reference_point VARCHAR(100),
+    formatted_address VARCHAR(200),
+    postal_code VARCHAR(20),
+    latitude NUMERIC,
+    longitude NUMERIC
+);
+CREATE INDEX idx_delivery_order ON delivery(order_id);
 
 -- =========================
 -- ORDER TOTALS

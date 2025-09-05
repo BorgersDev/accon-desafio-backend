@@ -2,54 +2,14 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { IntegrationsController } from './integrations.controller';
 import { IntegrationsService } from './integrations.service';
 import { OrdersService } from '../orders/orders.service';
+import { mockOrderDto, mockOrderArray } from '../mocks/order.mock';
 
 describe('IntegrationsController', () => {
   let controller: IntegrationsController;
   let integrationsService: IntegrationsService;
   let ordersService: OrdersService;
 
-  const mockOrders = [
-    {
-      id: '1',
-      type: 'DELIVERY',
-      displayId: '123',
-      createdAt: new Date().toISOString(),
-      orderTiming: 'INSTANT',
-      preparationStartDateTime: new Date().toISOString(),
-      extraInfo: '',
-      merchant: { id: 'm1', name: 'Store' },
-      customer: {
-        id: 'c1',
-        name: 'Customer',
-        documentNumber: '123',
-        email: 'a@a.com',
-        phone: { number: '999' },
-        ordersCountOnMerchant: 1,
-      },
-      items: [],
-      total: {
-        subTotal: { value: 10, currency: 'BRL' },
-        deliveryFee: { value: 0, currency: 'BRL' },
-        otherFees: { value: 0, currency: 'BRL' },
-        discount: { value: 0, currency: 'BRL' },
-        orderAmount: { value: 10, currency: 'BRL' },
-      },
-      payments: {
-        prepaid: 0,
-        pending: 10,
-        methods: [
-          {
-            id: 'p1',
-            type: 'PENDING',
-            method: 'CASH',
-            brand: '',
-            value: 10,
-            currency: 'BRL',
-          },
-        ],
-      },
-    },
-  ];
+  const mockOrders = [mockOrderDto];
 
   beforeEach(async () => {
     const integrationsServiceMock = {
